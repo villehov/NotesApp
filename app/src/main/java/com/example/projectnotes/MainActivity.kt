@@ -88,7 +88,7 @@ fun NotesListScreen(navController: NavController, notesList: MutableList<NotesIt
                 Column(modifier = Modifier
                     .padding(
                         horizontal = 16.dp,
-                        //vertical = 8.dp,
+                        vertical = 5.dp,
 
                     )
 
