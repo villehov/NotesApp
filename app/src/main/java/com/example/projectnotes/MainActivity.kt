@@ -42,7 +42,7 @@ fun NotesApp() {
     val navController = rememberNavController()
     val notesList = remember {
         mutableStateListOf(
-            NotesItem(1, "Note1", "do something"),
+            NotesItem(1, "Note1aaaaa", "do something"),
             NotesItem(2, "Note2", "do something else")
         )
     }
