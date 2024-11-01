@@ -17,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -140,6 +141,7 @@ fun NotesListScreen(navController: NavController, notesList: MutableList<NotesIt
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditListItemScreen(navController: NavController, noteId: Int, notesList: MutableList<NotesItem>) {
@@ -148,11 +150,10 @@ fun EditListItemScreen(navController: NavController, noteId: Int, notesList: Mut
     if (note == null) {
         navController.popBackStack()
         return
-    }
-    else {
+    } else {
         val header = remember { mutableStateOf(note.header) }
         val description = remember { mutableStateOf(note.description) }
-        var errorMsg = remember { mutableStateOf("") }
+        val errorMsg = remember { mutableStateOf("") }
 
         Scaffold(
             topBar = {
@@ -166,19 +167,18 @@ fun EditListItemScreen(navController: NavController, noteId: Int, notesList: Mut
                         )
                     }
                 )
-                SmallFloatingActionButton(
+            },
+            floatingActionButton = {
+                FloatingActionButton(
                     onClick = { navController.popBackStack() },
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(top = 10.dp)
                 ) {
                     Icon(Icons.Filled.Home, "Small floating action button.")
                 }
             }
         ) { paddingValues ->
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
@@ -186,63 +186,61 @@ fun EditListItemScreen(navController: NavController, noteId: Int, notesList: Mut
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(27.dp)
-                )
-                OutlinedTextField(
-                    value = header.value,
-                    onValueChange = { header.value = it },
-                    label = { Text("Header") },
-                    modifier = Modifier.fillMaxWidth()
-                )
+                item {
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(27.dp)
+                    )
+                    OutlinedTextField(
+                        value = header.value,
+                        onValueChange = { header.value = it },
+                        label = { Text("Header") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
-                OutlinedTextField(
-                    value = description.value,
-                    onValueChange = { description.value = it },
-                    label = { Text("Description") },
-                    modifier = Modifier.fillMaxWidth()
-                )
+                    OutlinedTextField(
+                        value = description.value,
+                        onValueChange = { description.value = it },
+                        label = { Text("Description") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                Text (
-                    text = errorMsg.value,
-                    color = MaterialTheme.colorScheme.error
-                )
+                    Text(
+                        text = errorMsg.value,
+                        color = MaterialTheme.colorScheme.error
+                    )
 
-                Button(
-                    onClick = {
-                        if (header.value.isNotBlank() && description.value.isNotBlank() &&
-                            header.value.length <= 20 && description.value.length <= 200 &&
-                            header.value.length >= 3 && description.value.length >= 10) {
+                    Button(
+                        onClick = {
+                            if (header.value.isNotBlank() && description.value.isNotBlank() &&
+                                header.value.length <= 20 && description.value.length <= 200 &&
+                                header.value.length >= 3 && description.value.length >= 10) {
 
-                            note.header = header.value
-                            note.description = description.value
+                                note.header = header.value
+                                note.description = description.value
 
-                            navController.popBackStack()
-                        } else  {
-                            // kotlin case loop; when {}
-                            when {
-                                header.value.length < 3 -> errorMsg.value = "Header must be at least 3 characters"
-                                description.value.length < 10 -> errorMsg.value = "Description must be at least 10 characters"
-                                header.value.length > 20 -> errorMsg.value = "Header must be at most 20 characters"
-                                description.value.length > 100 -> errorMsg.value = "Description must be at most 100 characters"
-                                else -> errorMsg.value = "Both header and description is needed"
+                                navController.popBackStack()
+                            } else {
+                                when {
+                                    header.value.length < 3 -> errorMsg.value = "Header must be at least 3 characters"
+                                    description.value.length < 10 -> errorMsg.value = "Description must be at least 10 characters"
+                                    header.value.length > 20 -> errorMsg.value = "Header must be at most 20 characters"
+                                    description.value.length > 100 -> errorMsg.value = "Description must be at most 100 characters"
+                                    else -> errorMsg.value = "Both header and description is needed"
+                                }
                             }
                         }
-                    },
-                    //modifier = Modifier.align(Alignment.End)
-                ) {
-                    Text("Save changes")
+                    ) {
+                        Text("Save changes")
+                    }
                 }
             }
         }
-
-
     }
 }
 
@@ -269,7 +267,9 @@ fun DetailedViewListItem(navController: NavController, noteId: Int, notesList: M
                         )
                     }
                 )
-                SmallFloatingActionButton(
+            },
+            floatingActionButton = {
+                FloatingActionButton(
                     onClick = { navController.popBackStack() },
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.secondary,
@@ -278,15 +278,29 @@ fun DetailedViewListItem(navController: NavController, noteId: Int, notesList: M
                 }
             }
         ) { paddingValues ->
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .padding(paddingValues)
                     .padding(16.dp)
-                    .padding(top = 50.dp)
+                    .fillMaxWidth()
             ) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(text = "${note.header} ID: ${note.id}")
-                Text(text = note.description)
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "${note.header} ID: ${note.id}",
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.Normal
+                        )
+                    )
+                    Divider(thickness = 2.dp)
+                    Text(
+                        text = note.description,
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.Normal
+                        ),
+                        modifier = Modifier.padding(top = 10.dp)
+                    )
+                }
             }
         }
     }
@@ -313,7 +327,9 @@ fun AddListItemScreen(navController: NavController, notesList: MutableList<Notes
                     )
                 }
             )
-            SmallFloatingActionButton(
+        },
+        floatingActionButton = {
+            FloatingActionButton(
                 onClick = { navController.popBackStack() },
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 contentColor = MaterialTheme.colorScheme.secondary,
@@ -322,70 +338,83 @@ fun AddListItemScreen(navController: NavController, notesList: MutableList<Notes
             }
         }
     ) { paddingValues ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            OutlinedTextField(
-                value = header.value,
-                onValueChange = { header.value = it },
-                label = { Text("Header") },
-                modifier = Modifier.fillMaxWidth()
-            )
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Spacer(modifier = Modifier.height(10.dp))
 
-            OutlinedTextField(
-                value = description.value,
-                onValueChange = { description.value = it },
-                label = { Text("Description") },
-                modifier = Modifier.fillMaxWidth()
-            )
+                OutlinedTextField(
+                    value = header.value,
+                    onValueChange = { header.value = it },
+                    label = { Text("Header") },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-            Text (
-                text = errorMsg.value,
-                color = MaterialTheme.colorScheme.error
-            )
+                OutlinedTextField(
+                    value = description.value,
+                    onValueChange = { description.value = it },
+                    label = { Text("Description") },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-            Button(
-                onClick = {
-                    if (header.value.isNotBlank() && description.value.isNotBlank() &&
-                        header.value.length <= 20 && description.value.length <= 200 &&
-                        header.value.length >= 3 && description.value.length >= 10) {
+                Spacer(modifier = Modifier.height(16.dp))
 
-                        val newNote = NotesItem(
-                            id = (notesList.size + 1),
-                            header = header.value,
-                            description = description.value
-                        )
-                        notesList.add(newNote)
+                Text(
+                    text = errorMsg.value,
+                    color = MaterialTheme.colorScheme.error
+                )
 
-                        header.value = ""
-                        description.value = ""
+                Button(
+                    onClick = {
+                        if (header.value.isNotBlank() && description.value.isNotBlank() &&
+                            header.value.length <= 20 && description.value.length <= 200 &&
+                            header.value.length >= 3 && description.value.length >= 10
+                        ) {
 
-                        navController.popBackStack()
-                    } else  {
-                        // kotlin case loop; when {}
-                        when {
-                            header.value.length < 3 -> errorMsg.value = "Header must be at least 3 characters"
-                            description.value.length < 10 -> errorMsg.value = "Description must be at least 10 characters"
-                            header.value.length > 20 -> errorMsg.value = "Header must be at most 20 characters"
-                            description.value.length > 100 -> errorMsg.value = "Description must be at most 100 characters"
-                            else -> errorMsg.value = "Both header and description is needed"
+                            val newNote = NotesItem(
+                                id = (notesList.size + 1),
+                                header = header.value,
+                                description = description.value
+                            )
+                            notesList.add(newNote)
+
+                            header.value = ""
+                            description.value = ""
+
+                            navController.popBackStack()
+                        } else {
+                            // kotlin case loop; when {}
+                            when {
+                                header.value.length < 3 -> errorMsg.value =
+                                    "Header must be at least 3 characters"
+
+                                description.value.length < 10 -> errorMsg.value =
+                                    "Description must be at least 10 characters"
+
+                                header.value.length > 20 -> errorMsg.value =
+                                    "Header must be at most 20 characters"
+
+                                description.value.length > 100 -> errorMsg.value =
+                                    "Description must be at most 100 characters"
+
+                                else -> errorMsg.value = "Both header and description is needed"
+                            }
                         }
-                    }
-                },
-                modifier = Modifier.align(Alignment.End)
-            ) {
-                Text("Add Note")
+                    },
+                ) {
+                    Text("Add Note")
+                }
             }
         }
     }
 }
-/*
+
 @Composable
 @Preview(showBackground = true)
 fun Preview() {
@@ -402,4 +431,3 @@ fun Preview() {
         composable("addListItem") { AddListItemScreen(navController, notesList) }
     }
 }
-*/
