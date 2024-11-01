@@ -16,6 +16,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -70,7 +71,12 @@ fun NotesListScreen(navController: NavController, notesList: MutableList<NotesIt
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(text = "Notes")
+                    Text(
+                        text = "Notes",
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
                 }
             )
         },
@@ -152,13 +158,21 @@ fun EditListItemScreen(navController: NavController, noteId: Int, notesList: Mut
             topBar = {
                 CenterAlignedTopAppBar(
                     title = {
-                        Text(text = "Edit Note")
+                        Text(
+                            text = "Edit Note",
+                            style = MaterialTheme.typography.headlineLarge.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                        )
                     }
                 )
                 SmallFloatingActionButton(
                     onClick = { navController.popBackStack() },
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 10.dp)
                 ) {
                     Icon(Icons.Filled.Home, "Small floating action button.")
                 }
@@ -166,9 +180,17 @@ fun EditListItemScreen(navController: NavController, noteId: Int, notesList: Mut
         ) { paddingValues ->
             Column(
                 modifier = Modifier
+                    .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(16.dp)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(27.dp)
+                )
                 OutlinedTextField(
                     value = header.value,
                     onValueChange = { header.value = it },
@@ -213,7 +235,7 @@ fun EditListItemScreen(navController: NavController, noteId: Int, notesList: Mut
                             }
                         }
                     },
-                    modifier = Modifier.align(Alignment.End)
+                    //modifier = Modifier.align(Alignment.End)
                 ) {
                     Text("Save changes")
                 }
@@ -239,7 +261,12 @@ fun DetailedViewListItem(navController: NavController, noteId: Int, notesList: M
             topBar = {
                 CenterAlignedTopAppBar(
                     title = {
-                        Text(text = "Detailed view")
+                        Text(
+                            text = "Detailed View Note",
+                            style = MaterialTheme.typography.headlineLarge.copy(
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
                     }
                 )
                 SmallFloatingActionButton(
@@ -278,7 +305,12 @@ fun AddListItemScreen(navController: NavController, notesList: MutableList<Notes
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(text = "Add Note")
+                    Text(
+                        text = "Add Note",
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
                 }
             )
             SmallFloatingActionButton(
