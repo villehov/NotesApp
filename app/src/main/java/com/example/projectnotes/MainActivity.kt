@@ -17,7 +17,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -297,7 +296,6 @@ fun DetailedViewListItem(navController: NavController, noteId: Int, notesList: M
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddListItemScreen(navController: NavController, notesList: MutableList<NotesItem>) {
@@ -403,24 +401,6 @@ fun AddListItemScreen(navController: NavController, notesList: MutableList<Notes
                     Text("Add Note")
                 }
             }
-        }
-    }
-}
-
-@Composable
-@Preview(showBackground = true)
-fun Preview() {
-    val navController = rememberNavController()
-    val notesList = remember { mutableStateListOf<NotesItem>() }
-
-    NavHost(navController = navController, startDestination = "notesList") {
-        composable("notesList") { NotesListScreen(navController, notesList) }
-        composable("addListItem") { AddListItemScreen(navController, notesList) }
-        composable("detailedViewListItem/{noteId}") {
-            DetailedViewListItem(navController, it.arguments?.getString("noteId")?.toInt() ?: 0, notesList)
-        }
-        composable("editListItem/{noteId}") {
-            EditListItemScreen(navController, it.arguments?.getString("noteId")?.toInt() ?: 0, notesList)
         }
     }
 }
