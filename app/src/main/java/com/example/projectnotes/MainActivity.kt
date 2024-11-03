@@ -17,7 +17,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -46,12 +45,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun NotesApp() {
     val navController = rememberNavController()
-    val notesList = remember {
-        mutableStateListOf(
-            NotesItem(1, "Note1aaaaa", "do something"),
-            NotesItem(2, "Note2", "do something else")
-        )
-    }
+    val notesList = remember { mutableStateListOf<NotesItem>() }
 
     NavHost(navController = navController, startDestination = "notesList") {
         composable("notesList") { NotesListScreen(navController, notesList) }
@@ -96,7 +90,6 @@ fun NotesListScreen(navController: NavController, notesList: MutableList<NotesIt
                     .padding(
                         horizontal = 16.dp,
                         vertical = 5.dp,
-
                     )
 
                 ) {
@@ -136,11 +129,9 @@ fun NotesListScreen(navController: NavController, notesList: MutableList<NotesIt
                     }
                 }
             }
-
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -174,7 +165,7 @@ fun EditListItemScreen(navController: NavController, noteId: Int, notesList: Mut
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.secondary,
                 ) {
-                    Icon(Icons.Filled.Home, "Small floating action button.")
+                    Icon(Icons.Filled.Home, "Redirect to home screen")
                 }
             }
         ) { paddingValues ->
@@ -190,7 +181,7 @@ fun EditListItemScreen(navController: NavController, noteId: Int, notesList: Mut
                     Spacer(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(27.dp)
+                            .height(16.dp)
                     )
                     OutlinedTextField(
                         value = header.value,
@@ -287,7 +278,7 @@ fun DetailedViewListItem(navController: NavController, noteId: Int, notesList: M
                 item {
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "${note.header} ID: ${note.id}",
+                        text = "${note.header}      ID:${note.id}",
                         style = MaterialTheme.typography.headlineMedium.copy(
                             fontWeight = FontWeight.Normal
                         )
@@ -314,7 +305,6 @@ fun AddListItemScreen(navController: NavController, notesList: MutableList<Notes
     val description = remember { mutableStateOf("") }
     var errorMsg = remember { mutableStateOf("") }
 
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -334,7 +324,7 @@ fun AddListItemScreen(navController: NavController, notesList: MutableList<Notes
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 contentColor = MaterialTheme.colorScheme.secondary,
             ) {
-                Icon(Icons.Filled.Home, "Small floating action button.")
+                Icon(Icons.Filled.Home, "Button to homepage.")
             }
         }
     ) { paddingValues ->
@@ -342,10 +332,12 @@ fun AddListItemScreen(navController: NavController, notesList: MutableList<Notes
             modifier = Modifier
                 .padding(paddingValues)
                 .padding(16.dp)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
                 Spacer(modifier = Modifier.height(16.dp))
-
 
                 OutlinedTextField(
                     value = header.value,
@@ -419,15 +411,16 @@ fun AddListItemScreen(navController: NavController, notesList: MutableList<Notes
 @Preview(showBackground = true)
 fun Preview() {
     val navController = rememberNavController()
-    val notesList = remember {
-        mutableStateListOf(
-            NotesItem(1, "Note1", "do something"),
-            NotesItem(2, "Note2", "do something else")
-        )
-    }
+    val notesList = remember { mutableStateListOf<NotesItem>() }
 
     NavHost(navController = navController, startDestination = "notesList") {
         composable("notesList") { NotesListScreen(navController, notesList) }
         composable("addListItem") { AddListItemScreen(navController, notesList) }
+        composable("detailedViewListItem/{noteId}") {
+            DetailedViewListItem(navController, it.arguments?.getString("noteId")?.toInt() ?: 0, notesList)
+        }
+        composable("editListItem/{noteId}") {
+            EditListItemScreen(navController, it.arguments?.getString("noteId")?.toInt() ?: 0, notesList)
+        }
     }
 }
